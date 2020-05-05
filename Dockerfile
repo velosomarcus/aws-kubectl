@@ -1,11 +1,15 @@
 FROM python:alpine
-MAINTAINER Mike Petersen <mike@odania-it.de>
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 
 RUN apk --no-cache add curl
 ADD run.sh /run.sh
 
-# Install kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+# Install kubectl according the target platform
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/$(echo $TARGETPLATFORM | cut -d'/' -f2)/kubectl \
 	&& mv kubectl /usr/local/bin \
 	&& chmod +x /usr/local/bin/kubectl
 
